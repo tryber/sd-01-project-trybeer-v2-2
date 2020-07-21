@@ -1,11 +1,11 @@
-const user = require('../controllers/user');
-const products = require('../controllers/products');
-const login = require('../controllers/login');
-const order = require('../controllers/order');
+const user = require('../application/userController');
+// const products = require('../application/productsController');
+// const login = require('../application/loginController');
+// const order = require('../application/orderController');
 
 module.exports = {
   user,
-  products,
-  login,
-  order,
+  // products,
+  // login,
+  // order,
 };
