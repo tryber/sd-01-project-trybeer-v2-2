@@ -20,9 +20,10 @@ const User = attributes({
   },
 })(
   class User {
-    // getUser(){
-    //   return this
-    // }
+    getAllUsers() {
+      const { user_id, name, email, admin, password } = this;
+      return { user_id, name, email, admin, password };
+    }
   }
 );
 

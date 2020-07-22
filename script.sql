@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS trybeer;
 USE trybeer;
 
 DELIMITER $$

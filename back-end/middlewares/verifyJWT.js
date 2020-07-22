@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const UserRepository = require('../../infrastructure/user/UserRepository');
 
 async function verifyJWT(req, res, next) {
   const secret = 'trybeer';
@@ -7,7 +7,8 @@ async function verifyJWT(req, res, next) {
     const token = req.headers.authorization;
     const payload = jwt.verify(token, secret);
     const { email } = payload;
-    const verifyUser = await User.validateEmail(email);
+    const newUser = new UserRepository()
+    const verifyUser = await newUser.validateEmail(email);
     if (!verifyUser) return res.status(401).json({ message: 'Token inválido!' });
     req.user = payload;
     next();
