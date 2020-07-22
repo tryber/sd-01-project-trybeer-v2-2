@@ -4,11 +4,21 @@ const { Users } = require('../database/models');
 
 class UserRepository {
   async createUser(obj = {}) {
-    console.log('********', obj)
+    console.log('********', obj);
     const newUser = await Users.create(UserMapper.toDatabase(obj));
     return UserMapper.toEntity(newUser);
   }
 
+  async login(email, password) {
+    const user = await Users.findOne({
+      where: {
+        email,
+        password,
+      },
+    });
+
+    return UserMapper.toEntity(user);
+  }
 
   //   async getAll() {
   //     const users = await Users.findAll();
