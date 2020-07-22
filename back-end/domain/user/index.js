@@ -18,6 +18,12 @@ const User = attributes({
     type: String,
     required: true,
   },
-})(class User {});
+})(
+  class User {
+    // getUser(){
+    //   return this
+    // }
+  }
+);
 
 module.exports = User;

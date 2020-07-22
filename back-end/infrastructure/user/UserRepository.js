@@ -3,9 +3,9 @@ const UserMapper = require('./UserMapper');
 const { Users } = require('../database/models');
 
 class UserRepository {
-
-  async createUser() {
-    const newUser = await Users.Create(UserMapper.toDatabase(this));
+  async createUser(obj = {}) {
+    console.log('********', obj)
+    const newUser = await Users.create(UserMapper.toDatabase(obj));
     return UserMapper.toEntity(newUser);
   }
 
