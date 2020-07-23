@@ -1,26 +1,30 @@
 const ProductMapper = require('./ProductMapper');
 
-const { Products } = require('../database/models');
+const { Products, Cart_products } = require('../database/models');
+
+Products.belongsTo(Cart_products, { foreignKey: 'cart_id' });
+Cart_products.hasMany(Products, { foreignKey: 'cart_id' });
 
 class ProductRepository {
-  async getProductsInCart(email, cartId) {
-    const id = cartId || (await getCartId(email));
-    return {
-      data: await new Promise((resolve, reject) => {
-        conn.query(`CALL getCartProducts(${id})`, (err, results) => {
-          if (err) return reject(err);
-          return resolve(results[0]);
-        });
-      }),
-      id,
-    };
+  static async getProductsInCart(email, cartId) {
+    const id = cartId || 1;
+    const produ = await Cart_products.findAll({
+      include: [
+        {
+          model: Products,
+          required: true,
+          // where: { cart_id: id },
+        },
+      ],
+    });
+    console.log(produ);
   }
 
   async getProducts(email) {
-    const productsInCart = await getProductsInCart(email);
-    const allProducts = await getAllProducts();
+    const productsInCart = await this.getProductsInCart(email);
+    const allProducts = await Products.findAll();
     allProducts.forEach((product, productIndex) => {
-      productsInCart.data.forEach((cartProducts) => {
+      productsInCart.data.forEach(cartProducts => {
         if (product.name === cartProducts.name)
           allProducts[productIndex].quantity = cartProducts.quantity;
       });
@@ -35,7 +39,7 @@ class ProductRepository {
 
   static async updateCart(email, productName, quantity) {
     const { data, id } = await getProductsInCart(email);
-    if (data.map((each) => each.name).includes(productName)) {
+    if (data.map(each => each.name).includes(productName)) {
       if (quantity === 0) return deleteBuy(productName, id);
       return updateBuy(productName, quantity, id);
     }
@@ -50,35 +54,6 @@ class ProductRepository {
     const id = await getCartId(email);
     return deleteBuy(name, id);
   }
-
-  // static async createUser(obj = {}) {
-  //   const newUser = await Products.create(ProductMapper.toDatabase(obj));
-  //   return ProductMapper.toEntity(newUser);
-  // }
-
-  // static async login(email, password) {
-  //   const user = await Products.findOne({
-  //     where: {
-  //       email,
-  //       password,
-  //     },
-  //   });
-  //   return ProductMapper.toEntity(user);
-  // }
-
-  // static async validateEmail(email) {
-  //   const user = await Products.findOne({
-  //     where: {
-  //       email,
-  //     },
-  //   });
-  //   return ProductMapper.toEntity(user);
-  // }
-
-  // static async updateNameUser(name, email) {
-  //   const newUser = await Products.update({ name }, { where: { email } });
-  //   return ProductMapper.toEntity(newUser);
-  // }
 }
 
 module.exports = ProductRepository;

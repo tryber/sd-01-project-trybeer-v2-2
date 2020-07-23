@@ -2,7 +2,6 @@ const User = require('../../domain/user');
 
 const UserMapper = {
   toEntity({ dataValues }) {
-    console.log('*********: ', dataValues)
     const { user_id, name, email, admin, password } = dataValues;
     return new User({ user_id, name, email, admin, password });
   },
