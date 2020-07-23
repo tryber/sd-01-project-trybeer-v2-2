@@ -15,6 +15,7 @@ class UserRepository {
         password,
       },
     });
+    if (!user) return false;
     return UserMapper.toEntity(user);
   }
 
@@ -24,34 +25,13 @@ class UserRepository {
         email,
       },
     });
+    if (!user) return false;
     return UserMapper.toEntity(user);
   }
-  
+
   static async updateNameUser(name, email) {
-    const newUser = await Users.update({ name }, { where: { email } });
-    return UserMapper.toEntity(newUser);
+    return Users.update({ name }, { where: { email } });
   }
-
-  // static async getUserbyId(id) {
-  //   const user = await Users.findOne({
-  //     where: {
-  //       user_id: id,
-  //     },
-  //   });
-  //   return UserMapper.toEntity(user);
-  // }
-
-  //   static async getUserbyId(id) {
-  //     const query = `SELECT name, email FROM user WHERE user_id = '${id}';`;
-  //     return new Promise((resolve, reject) => {
-  //       conn.query(query, (err, results) => {
-  //         if (err) return reject(err);
-  //         return resolve(results);
-  //       });
-  //     });
-  //   }
-
-  
 }
 
 module.exports = UserRepository;

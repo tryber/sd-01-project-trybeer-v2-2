@@ -9,14 +9,7 @@ const Products = attributes({
   price: {
     type: Float32Array,
     required: true,
-  }
-})(
-  class Products {
-    getAllProducts() {
-      const { product_id, name, price } = this;
-      return { product_id, name, price };
-    }
-  }
-);
+  },
+})(class Products {});
 
 module.exports = Products;

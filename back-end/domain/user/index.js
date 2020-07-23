@@ -18,13 +18,6 @@ const User = attributes({
     type: String,
     required: true,
   },
-})(
-  class User {
-    getAllUsers() {
-      const { user_id, name, email, admin, password } = this;
-      return { user_id, name, email, admin, password };
-    }
-  }
-);
+})(class User {});
 
 module.exports = User;

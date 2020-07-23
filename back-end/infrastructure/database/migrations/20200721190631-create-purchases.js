@@ -15,9 +15,9 @@ const factory = DataTypes => ({
     allowNull: false,
     type: DataTypes.INTEGER,
   },
-  finished: {
+  status: {
     allowNull: false,
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.STRING,
   },
   cart_id: {
     allowNull: false,
