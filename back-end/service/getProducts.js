@@ -29,17 +29,17 @@ const getAllProducts = async () =>
     });
   });
 
-async function getProducts(email) {
-  const productsInCart = await getProductsInCart(email);
-  const allProducts = await getAllProducts();
-  allProducts.forEach((product, productIndex) => {
-    productsInCart.data.forEach((cartProducts) => {
-      if (product.name === cartProducts.name)
-        allProducts[productIndex].quantity = cartProducts.quantity;
-    });
-  });
-  return allProducts;
-}
+// async function getProducts(email) {
+//   const productsInCart = await getProductsInCart(email);
+//   const allProducts = await getAllProducts();
+//   allProducts.forEach((product, productIndex) => {
+//     productsInCart.data.forEach((cartProducts) => {
+//       if (product.name === cartProducts.name)
+//         allProducts[productIndex].quantity = cartProducts.quantity;
+//     });
+//   });
+//   return allProducts;
+// }
 
 const deleteBuy = async (productName, id) =>
   new Promise((resolve, reject) => {
