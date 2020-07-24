@@ -10,7 +10,7 @@ const createUser = async (req, res) => {
   const { name, email, password, role } = req.body;
   const user = new User(name, email, password, role);
 
-  return await user.createUser().then(() => {
+  return user.createUser().then(() => {
     const token = generateJWT(email, role);
     res.status(201).json({ name, token, email, role });
   });
