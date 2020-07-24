@@ -7,8 +7,8 @@ const ProductMapper = {
   },
 
   toDatabase(survivor) {
-    const { name, price } = survivor;
-    return { name, price };
+    const { product_id, cart_id, quantity } = survivor;
+    return { product_id, cart_id, quantity };
   },
 };
 

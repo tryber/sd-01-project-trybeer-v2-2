@@ -19,8 +19,8 @@ const updateCart = async (req, res) => {
 
 const checkout = async (req, res) => {
   const { email } = req.user;
-  const productsCheckout = await ProductRepository.getCart(email);
-  return res.status(200).json(productsCheckout);
+  const { data } = await ProductRepository.getProductsInCart(email);
+  return res.status(200).json(data);
 };
 
 const deleteProductCart = async (req, res) => {

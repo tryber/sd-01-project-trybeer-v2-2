@@ -1,6 +1,10 @@
 const ProductMapper = require('./ProductMapper');
 const Sequelize = require('sequelize');
-const { Products, Carts, Users } = require('../database/models');
+const {
+  Products,
+  Carts,
+  CartProducts: Cart_products,
+} = require('../database/models');
 
 class ProductRepository {
   static formateObj(obj) {
@@ -26,7 +30,7 @@ class ProductRepository {
 
   static async getProductsInCart(email, cartId) {
     const id = cartId || (await ProductRepository.getCartId(email));
-    const cartProducts = await Carts.findAll({
+    const allProductsCart = await Carts.findAll({
       where: { cart_id: id },
       include: [
         {
@@ -36,16 +40,16 @@ class ProductRepository {
         },
       ],
     });
-    return ProductRepository.formateObj(cartProducts);
+    return { data: ProductRepository.formateObj(allProductsCart), id };
   }
 
   static async getProducts(email) {
-    const productsInCart = await ProductRepository.getProductsInCart(email);
+    const { data } = await ProductRepository.getProductsInCart(email);
     const allProducts = await Products.findAll().then(res =>
       res.map(each => each.dataValues)
     );
     allProducts.forEach((product, productIndex) => {
-      productsInCart.forEach(cartProducts => {
+      data.forEach(cartProducts => {
         if (product.name === cartProducts.name)
           allProducts[productIndex].quantity = cartProducts.quantity;
       });
@@ -53,22 +57,34 @@ class ProductRepository {
     return allProducts;
   }
 
+  static async getProductId(name) {
+    return Products.findOne({ where: { name } });
+  }
+
+  static async deleteProduct(product_id, email) {
+    const cart_id = getCartId(email);
+    return CartProducts.delete({
+      where: { cart_id, product_id },
+    });
+  }
+
   static async updateCart(email, productName, quantity) {
     const { data, id } = await getProductsInCart(email);
+    const productId = await ProductRepository.getProductId(name);
+
     if (data.map(each => each.name).includes(productName)) {
-      if (quantity === 0) return deleteBuy(productName, id);
-      return updateBuy(productName, quantity, id);
+      if (quantity === 0)
+        return CartProducts.delete({
+          where: { cart_id: id, product_id: productId },
+        });
+      return CartProducts.update(
+        { quantity },
+        { cart_id: id, product_id: productId }
+      );
     }
-    return createBuy(productName, id);
-  }
-
-  static async getCart(email, cartId) {
-    return getProductsInCart(email, cartId);
-  }
-
-  static async deleteProduct(name, email) {
-    const id = await getCartId(email);
-    return deleteBuy(name, id);
+    return CartProducts.create(
+      ProductMapper.toDatabase({ product_id: productId, cart_id: id, quantity })
+    );
   }
 }
 
