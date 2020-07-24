@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import SideBar from '../components/SideBar';
-
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import SideBar from '../components/SideBar';
 
 async function getOrders(user, setData, id) {
   const url = `http://localhost:3001/orders/${id}`;
@@ -18,6 +16,7 @@ async function updateStatus(user, id, setShowButton) {
 
   const res = await fetch(url, { method: 'PUT', headers: { authorization: user.token } })
     .then(response => response.json());
+  if (res.message === 'Pedido preparado com sucesso!') setShowButton(false);
   if (res.message === 'Pedido entregue com sucesso!') setShowButton(false);
 }
 
@@ -38,31 +37,24 @@ function renderProducts(products, classes) {
 }
 
 function renderDetails(params) {
-  const { data, purchaseDate, status, testid, user, id, classes, setShowButton } = params;
-  const { finished, price, products } = data;
+  const { data, purchaseDate, statusOrder, testid, user, id, classes, setShowButton } = params;
+  const { status, price, products } = data;
+  const verifyPending = user.role === 1 && status === 'Pendente'
+  const verifyPreparing = user.role === 1 && status === 'Preparando';
   return (
     <div>
-      <h1>Pedido <span data-testid="order-number">{id}</span> - <span data-testid={testid}>{user.role ? status : purchaseDate}</span></h1>
+      <h1>Pedido <span data-testid="order-number">{id}</span> - <span data-testid={testid}>{user.role ? statusOrder : purchaseDate}</span></h1>
       <div className={classes.container}>
         {renderProducts(products, classes)}
         <h1 className={classes.totalPrice}>Total: <span data-testid="order-total-value">R$ {price}</span></h1>
       </div>
-      {(user.role === 1 && !finished) &&
-      <Button
-        fullWidth
-        data-testid="mark-as-delivered-btn"
-        variant="contained"
-        color="primary"
-        className={classes.submit}
-        onClick={() => updateStatus(user, id, setShowButton)}
-      >
-        Marcar como Entregue
-      </Button>}
+      {(verifyPending) && <button data-testid="mark-as-prepare-order-btn" onClick={() => updateStatus(user, id, setShowButton)}>Preparar pedido</button>}
+      {(verifyPreparing) && <button data-testid="mark-as-delivered-btn" onClick={() => updateStatus(user, id, setShowButton)}>Marcar como Entregue</button>}
     </div>
   );
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   container: {
     border: '1px solid black',
     paddingLeft: 10,
@@ -81,10 +73,7 @@ const useStyles = makeStyles((theme) => ({
   totalPrice: {
     textAlign: 'end',
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+});
 
 function OrderDetails(props) {
   const [data, setData] = useState('');
@@ -95,17 +84,19 @@ function OrderDetails(props) {
 
   useEffect(() => {
     if (user) getOrders(user, setData, id);
+    setShowButton(true)
   }, [showButton]);
 
   if (data.message || !user) return <Redirect to='/login'/>;
   if (!data) return <div>Loading...</div>;
 
-  const { finished, purchase_date } = data;
-  const status = finished ? 'Entregue' : 'Pendente';
+  const statusArray = ['Entregue', 'Pendente', 'Preparando']
+  const { status, purchase_date } = data;
+  const statusOrder = statusArray.find(stature => stature === status)
   const date = new Date(purchase_date);
   const purchaseDate = `${date.getDate()}/${date.getMonth()}`;
   const testid = user.role ? 'order-status' : 'order-date';
-  const params = { data, purchaseDate, status, testid, user, id, classes, setShowButton };
+  const params = { data, purchaseDate, statusOrder, testid, user, id, classes, setShowButton };
 
   return (
     <SideBar title={`Detalhes - Pedido ${id}`} children={renderDetails(params)} />
