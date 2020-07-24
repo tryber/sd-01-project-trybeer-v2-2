@@ -54,6 +54,10 @@ function handleEnterClick(event, setText) {
   }
 }
 
+function sortData(data) {
+  return data ? data.messages.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+}
+
 function Chat({ location: { clientRoom } }) {
   const [data, setData] = useState('');
   const [text, setText] = useState('');
@@ -66,7 +70,7 @@ function Chat({ location: { clientRoom } }) {
     socket.on('history', msg => setData(msg));
   }, []);
 
-  const messages = data ? data.messages.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+  const messages = sortData(data);
   if (!user) return <Redirect to='/login'/>;
   if (user.role && !clientRoom) return <Redirect to='/admin/chat'/>;
   return (

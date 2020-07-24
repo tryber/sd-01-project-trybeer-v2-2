@@ -9,7 +9,7 @@ const connection = () => (
       useUnifiedTopology: true,
     })
     .then(conn => conn.db('trybeerchat'))
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       process.exit(1);
     })

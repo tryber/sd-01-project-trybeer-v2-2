@@ -1,4 +1,4 @@
-const conn = require("../connection");
+const conn = require('../connection');
 
 const getCartId = async email =>
   new Promise((resolve, reject) => {
