@@ -44,11 +44,11 @@ function ChatList() {
       <div className={classes.content}>
         {rooms.sort((a, b) => new Date(b.lastUpdate) - new Date(a.lastUpdate)).map(room => (
           <Link className={classes.room} to={{ pathname: '/chat', clientRoom: room.client }} key={room.client}>
-            <p><strong>Cliente: {room.client}</strong></p>
-            <p>Última mensagem: {new Date(room.lastUpdate).toLocaleString()}</p>
+            <p><strong data-testid="profile-name">Cliente: {room.client}</strong></p>
+            <p data-testid="last-message">Última mensagem: {new Date(room.lastUpdate).toLocaleString()}</p>
           </Link>
         ))}
-        {rooms.length === 0 && <h3>Nenhuma conversa por aqui!</h3>}
+        {rooms.length === 0 && <h3 data-testid="text-for-no-conversation">Nenhuma conversa por aqui!</h3>}
       </div>
     } />
   );

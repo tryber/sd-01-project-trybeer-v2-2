@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#eaeae7',
     display: 'flex',
     flexDirection: 'column-reverse',
-    marginTop: '2.5%',
+    marginTop: '1%',
     height: '500px',
     width: '530px',
     overflow: 'auto',
@@ -30,13 +30,12 @@ const useStyles = makeStyles(() => ({
     },
   },
   bubble: {
-    minWidth: '90px',
+    minWidth: '105px',
     border: '0.5px solid black',
     borderRadius: '6px',
     margin: '5px',
     padding: '10px',
     '& p': { margin: 0 },
-    '& p:first-child': { fontWeight: 'bold' },
   },
 }));
 
@@ -46,14 +45,17 @@ function messageIdentation(admin, msg, classes) {
 
 const MessageBubble = ({ messages, client, admin }) => {
   const classes = useStyles();
-  const chatBubbles = messages.map((msg, index) => (
-    <div className={messageIdentation(admin, msg.admin, classes)} key={index}>
-      <div key={index} className={classes.bubble}>
-        <p>{msg.admin ? 'Loja' : client}</p>
-        <p>{msg.text}</p>
+  const chatBubbles = messages.map((msg, index) => {
+    const date = new Date(msg.date);
+    return (
+      <div className={messageIdentation(admin, msg.admin, classes)} key={index}>
+        <div key={index} className={classes.bubble}>
+          <p><strong data-testid="nickname">{msg.admin ? 'Loja' : client}</strong> - <span data-testid="message-time">{`${date.getHours()}:${date.getMinutes()}`}</span></p>
+          <p data-testid="text-message">{msg.text}</p>
+        </div>
       </div>
-    </div>
-  ));
+    )
+  });
   return <div className={classes.container}>{chatBubbles}</div>;
 };
 

@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import { makeStyles } from '@material-ui/core/styles';
 import SideBar from '../components/SideBar';
 import MessageBubble from '../components/MessageBubble';
+import ChatHeader from '../components/ChatHeader';
 
 const useStyles = makeStyles({
   container: {
@@ -76,11 +77,11 @@ function Chat({ location: { clientRoom } }) {
   return (
     <SideBar title="Conversa" children={
       <div className={classes.container}>
-        <h2>Conversa com {user.role ? room : 'a Loja'}:</h2>
+        <ChatHeader room={room} role={user.role} />
         <MessageBubble messages={messages} client={data.client || user.email} admin={user.role} />
         <div className={classes.insertMessage}>
-          <input type="text" onChange={(e) => setText(e.target.value)} placeholder="Mensagem" className={classes.messageInput} id="input" onKeyUp={(e) => handleEnterClick(e, setText)} />
-          <button id="button" className={classes.sendButton} onClick={() => sendMessage(text, user, room)}>Enviar</button>
+          <input data-testid="chat-message" type="text" onChange={(e) => setText(e.target.value)} placeholder="Mensagem" className={classes.messageInput} id="input" onKeyUp={(e) => handleEnterClick(e, setText)} />
+          <button data-testid="send-message-btn" id="button" className={classes.sendButton} onClick={() => sendMessage(text, user, room)}>Enviar</button>
         </div>
       </div>
     } />
