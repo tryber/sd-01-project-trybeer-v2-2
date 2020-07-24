@@ -7,6 +7,8 @@ import ProductsPage from './pages/ProductsPage';
 import OrderPage from './pages/OrderPage';
 import OrderDetails from './pages/OrderDetails';
 import Checkout from './pages/Checkout';
+import Chat from './pages/Chat';
+import ChatList from './pages/ChatList';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path='/admin/orders' component={OrderPage} />
           <Route path='/checkout' component={Checkout} />
           <Route path='/admin/checkout' component={Checkout} />
+          <Route path='/chat' component={Chat} />
+          <Route path='/admin/chat' component={ChatList} />
         </Switch>
       </BrowserRouter>
     </div>
