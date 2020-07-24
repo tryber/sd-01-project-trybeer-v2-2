@@ -41,9 +41,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function messageIdentation(admin, msg, classes) {
-  const identation = admin ? (msg ? 'right' : 'left') : (msg ? 'left' : 'right');
-  if (identation === 'left') return classes.bubbleContainerLeft;
-  return classes.bubbleContainerRight;
+  return admin ? (msg ? classes.bubbleContainerRight : classes.bubbleContainerLeft) : (msg ? classes.bubbleContainerLeft : classes.bubbleContainerRight);
 }
 
 const MessageBubble = ({ messages, client, admin }) => {

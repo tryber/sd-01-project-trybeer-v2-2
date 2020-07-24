@@ -1,6 +1,6 @@
 const conn = require("../connection");
 
-const getCartId = async (email) =>
+const getCartId = async email =>
   new Promise((resolve, reject) => {
     conn.query(`SELECT getUserCart("${email}")`, (err, results) => {
       if (err) return reject(err);
@@ -23,7 +23,7 @@ const getProductsInCart = async (email, cartId) => {
 
 const getAllProducts = async () =>
   new Promise((resolve, reject) => {
-    conn.query("SELECT * FROM trybeer.product;", (err, results) => {
+    conn.query('SELECT * FROM trybeer.product;', (err, results) => {
       if (err) return reject(err);
       return resolve(results);
     });
@@ -50,7 +50,7 @@ const deleteBuy = async (productName, id) =>
       (err, results) => {
         if (err) return reject(err);
         return resolve(results);
-      }
+      },
     );
   });
 
@@ -65,7 +65,7 @@ const updateBuy = async (productName, quantity, id) =>
       (err, results) => {
         if (err) return reject(err);
         return resolve(results);
-      }
+      },
     );
   });
 
@@ -84,7 +84,7 @@ const createBuy = async (productName, id) =>
       (err, results) => {
         if (err) return reject(err);
         return resolve(results);
-      }
+      },
     );
   });
 

@@ -12,12 +12,11 @@ async function getMessageHistory(email) {
 async function createRoom(email) {
   const db = await connection();
   const userRoom = await getMessageHistory(email);
-  if (userRoom.length === 0) {
+  if (userRoom.length === 0)
     await db.collection('messages').insertOne({
       client: email,
       messages: [],
     });
-  }
 }
 
 async function insertMessage(data) {
@@ -26,17 +25,18 @@ async function insertMessage(data) {
   await db.collection('messages').updateOne({
     client,
   },
-  { $set: {
-      lastUpdate: new Date(),
-    },
-    $push: {
-      messages: {
-        text,
-        admin,
-        date: new Date(),
+    {
+      $set: {
+        lastUpdate: new Date(),
       },
-    }
-  });
+      $push: {
+        messages: {
+          text,
+          admin,
+          date: new Date(),
+        },
+      },
+    });
 }
 
 async function getAllRooms() {
@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('message', async (data) => {
-    await createRoom(email);
+    await createRoom(data.client);
     await insertMessage(data);
     const messages = await getMessageHistory(data.client);
     io.to(data.client).emit('history', messages[0]);
