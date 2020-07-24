@@ -1,40 +1,56 @@
 const ProductMapper = require('./ProductMapper');
-
-const { Products, Cart_products } = require('../database/models');
-
-Products.belongsTo(Cart_products, { foreignKey: 'cart_id' });
-Cart_products.hasMany(Products, { foreignKey: 'cart_id' });
+const Sequelize = require('sequelize');
+const { Products, Carts, Users } = require('../database/models');
 
 class ProductRepository {
+  static formateObj(obj) {
+    const values = obj[0].dataValues.Products.map(each => each.dataValues);
+    values.forEach(value => {
+      value.quantity = value.Cart_products.dataValues.quantity;
+    });
+    const newValue = values.map(({ product_id, name, price, quantity }) => {
+      return { product_id, name, price, quantity };
+    });
+    return newValue;
+  }
+
+  static async getCartId(email) {
+    const sequelize = new Sequelize('trybeer', 'root', 'password', {
+      host: 'localhost',
+      dialect: 'mysql',
+    });
+
+    const id = await sequelize.query(`SELECT getUserCart("${email}")`);
+    return id[0][0][`getUserCart("${email}")`];
+  }
+
   static async getProductsInCart(email, cartId) {
-    const id = cartId || 1;
-    const produ = await Cart_products.findAll({
+    const id = cartId || (await ProductRepository.getCartId(email));
+    const cartProducts = await Carts.findAll({
+      where: { cart_id: id },
       include: [
         {
           model: Products,
-          required: true,
-          // where: { cart_id: id },
+          as: 'Products',
+          through: { attributes: ['quantity'] },
         },
       ],
     });
-    console.log(produ);
+    return ProductRepository.formateObj(cartProducts);
   }
 
-  async getProducts(email) {
-    const productsInCart = await this.getProductsInCart(email);
-    const allProducts = await Products.findAll();
+  static async getProducts(email) {
+    const productsInCart = await ProductRepository.getProductsInCart(email);
+    const allProducts = await Products.findAll().then(res =>
+      res.map(each => each.dataValues)
+    );
     allProducts.forEach((product, productIndex) => {
-      productsInCart.data.forEach(cartProducts => {
+      productsInCart.forEach(cartProducts => {
         if (product.name === cartProducts.name)
           allProducts[productIndex].quantity = cartProducts.quantity;
       });
     });
     return allProducts;
-  }
-
-  static async getAllProducts() {
-    const products = await Products.findAll();
-    return getProducts();
   }
 
   static async updateCart(email, productName, quantity) {

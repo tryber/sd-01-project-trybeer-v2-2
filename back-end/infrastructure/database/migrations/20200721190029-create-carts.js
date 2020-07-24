@@ -13,7 +13,8 @@ const factory = DataTypes => ({
     references: {
       model: 'Users',
       key: 'user_id',
-    }
+    },
+    onDelete: 'CASCADE'
   },
 });
 

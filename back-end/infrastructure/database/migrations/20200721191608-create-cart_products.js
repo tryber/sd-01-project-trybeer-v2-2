@@ -7,7 +7,8 @@ const factory = DataTypes => ({
     references: {
       model: 'Products',
       key: 'product_id',
-    }
+    },
+    onDelete: 'CASCADE'
   },
   cart_id: {
     allowNull: false,
@@ -15,7 +16,8 @@ const factory = DataTypes => ({
     references: {
       model: 'Carts',
       key: 'cart_id',
-    }
+    },
+    onDelete: 'CASCADE'
   },
   quantity: {
     allowNull: false,

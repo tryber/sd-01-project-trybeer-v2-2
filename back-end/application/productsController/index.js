@@ -7,7 +7,7 @@ const router = express.Router();
 
 const allProducts = (req, res) => {
   const { email } = req.user;
-  return ProductRepository.getProductsInCart(email).then(body => res.status(201).json(body));
+  return ProductRepository.getProducts(email).then(body => res.status(201).json(body));
 };
 
 const updateCart = async (req, res) => {

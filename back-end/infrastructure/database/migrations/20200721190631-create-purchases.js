@@ -25,7 +25,8 @@ const factory = DataTypes => ({
     references: {
       model: 'Carts',
       key: 'cart_id',
-    }
+    },
+    onDelete: 'CASCADE'
   },
   price: {
     allowNull: false,

@@ -9,6 +9,14 @@ const Carts = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
+
+  Carts.associate = models => {
+    Carts.belongsToMany(models.Products, {
+      through: 'Cart_products',
+      foreignKey: 'cart_id',
+    });
+  };
+
   return Carts;
 };
 
