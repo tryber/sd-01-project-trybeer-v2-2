@@ -14,6 +14,13 @@ const Carts = (sequelize, DataTypes) => {
     Carts.belongsToMany(models.Products, {
       through: 'Cart_products',
       foreignKey: 'cart_id',
+      as: 'Products' 
+    });
+
+    Carts.belongsToMany(models.Users, {
+      through: 'Users',
+      foreignKey: 'user_id',
+      as: 'Users'
     });
   };
 
