@@ -59,12 +59,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 function generateView(classes, data, totalValue, setTotalValue, submitProduct) {
-  console.log(
-    '%c⧭o que tem aqui?',
-    'color: #00e600',
-    data.map(({ name }) => name)
-  );
-
   return (
     <div>
       <div className={classes.container}>
