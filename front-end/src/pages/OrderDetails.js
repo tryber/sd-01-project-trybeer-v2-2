@@ -12,7 +12,7 @@ async function getOrders(user, setData, id) {
 }
 
 async function updateStatus(user, id, status, setStatusOrder, setShowButton) {
-  const url = `http://localhost:3001/orders/${id}`   
+  const url = `http://localhost:3001/orders/${id}`;
 
   await fetch(url, { method: 'PUT', headers: { authorization: user.token }, body: JSON.stringify({ status }) })
     .then(response => response.json()).then(() => {
