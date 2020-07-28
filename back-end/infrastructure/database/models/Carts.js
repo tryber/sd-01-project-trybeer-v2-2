@@ -10,18 +10,15 @@ const Carts = (sequelize, DataTypes) => {
     }
   );
 
-  Carts.associate = models => {
+  Carts.associate = (models) => {
     Carts.belongsToMany(models.Products, {
       through: 'Cart_products',
       foreignKey: 'cart_id',
-      as: 'Products' 
     });
 
-    Carts.belongsToMany(models.Users, {
-      through: 'Users',
-      foreignKey: 'user_id',
-      as: 'Users'
-    });
+    Carts.belongsTo(models.Users, { foreignKey: 'user_id' });
+
+    Carts.belongsTo(models.Purchases, { foreignKey: 'cart_id' });
   };
 
   return Carts;

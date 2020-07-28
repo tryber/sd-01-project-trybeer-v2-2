@@ -16,10 +16,7 @@ const Purchases = (sequelize, DataTypes) => {
   );
 
   Purchases.associate = models => {
-    Purchases.belongsTo(models.Carts, {
-      through: 'Carts',
-      foreignKey: 'purchase_id',
-    });    
+    Purchases.hasOne(models.Carts, { foreignKey: 'cart_id' });    
   };
 
   return Purchases;

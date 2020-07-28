@@ -12,6 +12,11 @@ const Users = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
+
+  Users.associate = (models) => {
+    Users.hasMany(models.Carts, { foreignKey: 'user_id' });
+  };
+
   return Users;
 };
 

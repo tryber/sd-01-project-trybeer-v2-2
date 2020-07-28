@@ -1,15 +1,13 @@
 const ProductMapper = require('./ProductMapper');
 const Sequelize = require('sequelize');
-const {
-  Products,
-  Carts,
-  CartProducts: Cart_products,
-} = require('../database/models');
+const { Products, Carts, Cart_products } = require('../database/models');
+
+const CartProducts = Cart_products;
 
 class ProductRepository {
   static formateObj(obj) {
-    const values = obj[0].dataValues.Products.map(each => each.dataValues);
-    values.forEach(value => {
+    const values = obj[0].dataValues.Products.map((each) => each.dataValues);
+    values.forEach((value) => {
       value.quantity = value.Cart_products.dataValues.quantity;
     });
     const newValue = values.map(({ product_id, name, price, quantity }) => {
@@ -45,11 +43,11 @@ class ProductRepository {
 
   static async getProducts(email) {
     const { data } = await ProductRepository.getProductsInCart(email);
-    const allProducts = await Products.findAll().then(res =>
-      res.map(each => each.dataValues)
+    const allProducts = await Products.findAll().then((res) =>
+      res.map((each) => each.dataValues)
     );
     allProducts.forEach((product, productIndex) => {
-      data.forEach(cartProducts => {
+      data.forEach((cartProducts) => {
         if (product.name === cartProducts.name)
           allProducts[productIndex].quantity = cartProducts.quantity;
       });
@@ -58,28 +56,29 @@ class ProductRepository {
   }
 
   static async getProductId(name) {
-    return Products.findOne({ where: { name } });
+    const id = await Products.findOne({ where: { name } });
+    return id.dataValues.product_id;
   }
 
-  static async deleteProduct(product_id, email) {
-    const cart_id = getCartId(email);
-    return CartProducts.delete({
-      where: { cart_id, product_id },
+  static async deleteProduct(name, email) {
+    const cart_id = await ProductRepository.getCartId(email);
+    const productId = await ProductRepository.getProductId(name);
+    return CartProducts.destroy({
+      where: { cart_id, product_id: productId },
     });
   }
 
   static async updateCart(email, productName, quantity) {
-    const { data, id } = await getProductsInCart(email);
-    const productId = await ProductRepository.getProductId(name);
-
-    if (data.map(each => each.name).includes(productName)) {
+    const { data, id } = await ProductRepository.getProductsInCart(email);
+    const productId = await ProductRepository.getProductId(productName);
+    if (data.map((each) => each.name).includes(productName)) {
       if (quantity === 0)
-        return CartProducts.delete({
+        return CartProducts.destroy({
           where: { cart_id: id, product_id: productId },
         });
       return CartProducts.update(
         { quantity },
-        { cart_id: id, product_id: productId }
+        { where: { cart_id: id, product_id: productId } }
       );
     }
     return CartProducts.create(

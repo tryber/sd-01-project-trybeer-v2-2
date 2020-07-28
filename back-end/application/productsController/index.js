@@ -24,9 +24,9 @@ const checkout = async (req, res) => {
 };
 
 const deleteProductCart = async (req, res) => {
-  const { id } = req.params;
+  const { name } = req.params;
   const { email } = req.user;
-  const deleteProduct = await ProductRepository.deleteProduct(id, email);
+  const deleteProduct = await ProductRepository.deleteProduct(name, email);
   res.status(200).json(deleteProduct);
 };
 
@@ -36,6 +36,6 @@ router.get('/', rescue(allProducts));
 
 router.post('/', rescue(updateCart));
 
-router.delete('/:id', rescue(deleteProductCart));
+router.delete('/:name', rescue(deleteProductCart));
 
 module.exports = router;

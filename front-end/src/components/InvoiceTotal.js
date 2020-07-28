@@ -51,10 +51,13 @@ function constructorTableCell(data, { cels, deleteIcon }, setShouldUpdate) {
         {transformCurrency(price * quantity)}
       </TableCell>
       <TableCell className={cels} align='left'>
-        <DeleteIcon className={deleteIcon} onClick={() => {
-          setShouldUpdate(true);
-          deleteProduct(name);
-        }} />
+        <DeleteIcon
+          className={deleteIcon}
+          onClick={() => {
+            setShouldUpdate(true);
+            deleteProduct(name);
+          }}
+        />
       </TableCell>
     </TableRow>
   ));
