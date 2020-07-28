@@ -1,8 +1,10 @@
 const ProductMapper = require('./ProductMapper');
 const Sequelize = require('sequelize');
-const { Products, Carts, Cart_products } = require('../database/models');
-
-const CartProducts = Cart_products;
+const {
+  Products,
+  Carts,
+  Cart_products: CartProducts,
+} = require('../database/models');
 
 class ProductRepository {
   static formateObj(obj) {
