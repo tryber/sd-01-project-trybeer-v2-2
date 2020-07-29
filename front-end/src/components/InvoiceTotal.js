@@ -66,7 +66,6 @@ function constructorTableCell(data, { cels, deleteIcon }, setShouldUpdate) {
 function InvoiceTotal(props) {
   const classes = useStyles();
   const { data, setShouldUpdate } = props;
-
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label='spanning table'>

@@ -9,14 +9,14 @@ const {
 class ProductRepository {
   static formateObj(obj) {
     const values = obj[0].dataValues.Products.map(each => each.dataValues);
-    values.forEach((value) => {
+    const newValues = values.map((value) => {
       const newObject = {
         ...value,
         quantity: value.Cart_products.dataValues.quantity,
       };
       return newObject;
     });
-    const newValue = values.map(({ product_id, name, price, quantity }) => ({
+    const newValue = newValues.map(({ product_id, name, price, quantity }) => ({
       product_id,
       name,
       price,
