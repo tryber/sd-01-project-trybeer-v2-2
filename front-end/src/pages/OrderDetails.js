@@ -81,17 +81,19 @@ function btnVerifyPreparing(verifyFunction, user, id, setStatusOrder, setShowBut
   );
 }
 
+function generateTitleDetails(classes, transformCurrency, price) {
+  return (
+    <h1 className={classes.totalPrice}>
+      Total:{' '}
+      <span data-testid='order-total-value'>
+        {' '}
+        {transformCurrency(price)}
+      </span>
+    </h1>
+  );
+}
 function renderDetails(params) {
-  const {
-    data,
-    purchaseDate,
-    statusOrder,
-    setStatusOrder,
-    testid,
-    user,
-    id,
-    classes,
-    setShowButton,
+  const { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton,
   } = params;
   const { status, price, products } = data;
   const verifyPending = user.role === 1 && status === 'Pendente';
@@ -106,13 +108,7 @@ function renderDetails(params) {
       </h1>
       <div className={classes.container}>
         {renderProducts(products, classes)}
-        <h1 className={classes.totalPrice}>
-          Total:{' '}
-          <span data-testid='order-total-value'>
-            {' '}
-            {transformCurrency(price)}
-          </span>
-        </h1>
+        {generateTitleDetails(classes, transformCurrency, price)}
       </div>
       <br/>
       {btnVerifyPending(verifyPending, user, id, setStatusOrder, setShowButton)}
@@ -164,10 +160,7 @@ function OrderDetails(props) {
   const testid = user.role ? 'order-status' : 'order-date';
   const params = { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton };
   return (
-    <SideBar
-      title={`Detalhes - Pedido ${id}`}
-      children={renderDetails(params)}
-    />
+    <SideBar title={`Detalhes - Pedido ${id}`} children={renderDetails(params)} />
   );
 }
 
