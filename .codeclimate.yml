@@ -9,6 +9,9 @@ exclude_patterns:
   - "cypress/**/*"
   - "back-end/public/**/*"
   - "back-end/public/images/**/*"
+  - "back-end/infrastructure/database/migrations/*.js"
+  - "back-end/infrastructure/database/seeders/*.js"
+  - "back-end/infrastructure/database/models/*.js"
 checks:
   argument-count:
     config:
