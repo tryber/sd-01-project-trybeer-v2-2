@@ -10,7 +10,7 @@ exclude_patterns:
   - "back-end/public/**/*"
   - "back-end/infrastructure/database/migrations/*.js"
   - "back-end/infrastructure/database/seeders/*.js"
-  - "back-end/infrastructure/database/models/index.js"
+  - "back-end/infrastructure/database/models/*.js"
 checks:
   argument-count:
     config:
