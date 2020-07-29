@@ -5,6 +5,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import { transformCurrency } from '../service';
 
 const useStyles = makeStyles({
   root: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles({
 
 function OrderCard({ order, isAdmin }) {
   const linkRoute = isAdmin ? '/admin' : '';
-  const orderStatus = order.finished ? 'Entregue' : 'Pendente';
+  const orderStatus = order.status;
   const date = new Date(order.purchase_date);
   const purchaseDate = `${date.getDate()}/${date.getMonth()}`;
   const classes = useStyles();
@@ -39,7 +40,7 @@ function OrderCard({ order, isAdmin }) {
         </CardContent>
         <CardActions className={classes.cardActions}>
           <Typography variant="h5" component="p" data-testid={`${order.purchase_id}-order-total-value`}>
-            {`R$ ${order.price}`}
+            {transformCurrency(order.price)}
           </Typography>
           <Typography component="p">
             {isAdmin !== 0 && orderStatus}

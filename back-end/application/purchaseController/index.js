@@ -41,6 +41,7 @@ const orderDetails = async (req, res) => {
 
 const updateOrderState = async (req, res) => {
   const { status } = req.body
+  console.log('status', status)
   const orderId = req.params.id;
   return PurchaseRepository.updateState(orderId, status).then((response) =>
     res.status(200).json(response)
