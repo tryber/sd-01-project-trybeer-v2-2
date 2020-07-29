@@ -8,7 +8,7 @@ const {
 
 class ProductRepository {
   static formateObj(obj) {
-    const values = obj[0].dataValues.Products.map((each) => each.dataValues);
+    const values = obj[0].dataValues.Products.map(each => each.dataValues);
     values.forEach((value) => {
       const newObject = {
         ...value,

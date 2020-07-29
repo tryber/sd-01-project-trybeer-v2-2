@@ -40,7 +40,7 @@ async function insertMessage(data) {
           date: new Date(),
         },
       },
-    }
+    },
   );
 }
 
