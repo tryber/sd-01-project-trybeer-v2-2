@@ -14,6 +14,7 @@ import LocalBarSharpIcon from '@material-ui/icons/LocalBarSharp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppTwoToneIcon from '@material-ui/icons/ExitToAppTwoTone';
 import MenuIcon from '@material-ui/icons/Menu';
+import ChatIcon from '@material-ui/icons/Chat';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,10 +26,11 @@ const listIcon = [
   <LocalBarSharpIcon />,
   <ViewListSharpIcon />,
   <AccountCircleIcon />,
+  <ChatIcon />,
   <ExitToAppTwoToneIcon />,
 ];
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 const user = JSON.parse(localStorage.getItem('user')) || '';
 const adminRoute = user.role ? '/admin' : '';
 
@@ -36,12 +38,14 @@ const mock = [
   ['Produtos', 'products'],
   ['Meus pedidos', 'orders'],
   ['Meu Perfil', 'profile'],
+  ['Conversar com a loja', 'chat'],
   ['Sair', 'login'],
 ];
 
 if (user.role) {
   mock[0] = '';
   mock[1][0] = 'Pedidos';
+  mock[3][0] = 'Conversas';
 }
 
 const useStyles = makeStyles(theme => ({
