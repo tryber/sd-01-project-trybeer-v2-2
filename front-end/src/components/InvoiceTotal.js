@@ -75,7 +75,7 @@ function InvoiceTotal(props) {
           <TableRow>
             <TableCell></TableCell>
             <TableCell colSpan={1}>Total</TableCell>
-            <TableCell align='left'>{transformCurrency(total(data))}</TableCell>
+            <TableCell align='left'>R$ {total(data)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
