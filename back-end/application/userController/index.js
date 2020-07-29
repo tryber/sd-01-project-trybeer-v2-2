@@ -23,8 +23,8 @@ const getOneUser = (req, res) => {
 const updateUser = (req, res) => {
   const { email } = req.user;
   const { name } = req.body;
-  return UserRepository.updateNameUser(name, email).then((body) =>
-    res.status(200).json(body)
+  return UserRepository.updateNameUser(name, email).then(body =>
+    res.status(200).json(body),
   );
 };
 

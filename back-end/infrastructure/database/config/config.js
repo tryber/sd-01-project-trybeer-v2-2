@@ -1,4 +1,5 @@
 const path = require('path');
+
 const enviromentVariable = path.resolve(__dirname, '..', '..', '..', '.env');
 require('dotenv').config({ path: enviromentVariable });
 

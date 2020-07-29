@@ -24,13 +24,13 @@ class PurchaseRepository {
         {
           model: Users,
           as: 'User',
-          where: { email: email },
+          where: { email },
         },
       ],
     });
     const purchases = carts
       .map(({ dataValues }) => dataValues)
-      .filter((values) => values.Purchase)
+      .filter(values => values.Purchase)
       .map(({ Purchase }) => Purchase.dataValues);
     return purchases;
   }
@@ -49,7 +49,7 @@ class PurchaseRepository {
       { status },
       {
         where: { purchase_id: orderId },
-      }
+      },
     );
     return orders;
   }

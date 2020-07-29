@@ -7,8 +7,8 @@ const router = express.Router();
 
 const allProducts = (req, res) => {
   const { email } = req.user;
-  return ProductRepository.getProducts(email).then((body) =>
-    res.status(201).json(body)
+  return ProductRepository.getProducts(email).then(body =>
+    res.status(201).json(body),
   );
 };
 
@@ -18,7 +18,7 @@ const updateCart = async (req, res) => {
   const update = await ProductRepository.updateCart(
     email,
     productName,
-    quantity
+    quantity,
   );
   return res.status(200).json(update);
 };

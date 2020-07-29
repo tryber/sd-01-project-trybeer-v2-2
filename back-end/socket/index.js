@@ -47,7 +47,7 @@ async function insertMessage(data) {
 async function getAllRooms() {
   const db = await connection();
   const data = await db.collection('messages').find().toArray();
-  return data.map((msg) => ({
+  return data.map(msg => ({
     client: msg.client,
     lastUpdate: msg.lastUpdate,
   }));
