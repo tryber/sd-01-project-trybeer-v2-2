@@ -18,4 +18,3 @@ app.use('/products', verifyJWT, products);
 app.use('/orders', verifyJWT, purchase);
 
 module.exports = app;
-    

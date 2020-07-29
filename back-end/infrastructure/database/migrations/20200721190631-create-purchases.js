@@ -1,6 +1,6 @@
 'use strict';
 
-const factory = DataTypes => ({
+const factory = (DataTypes) => ({
   purchase_id: {
     allowNull: false,
     autoIncrement: true,
@@ -26,7 +26,7 @@ const factory = DataTypes => ({
       model: 'Carts',
       key: 'cart_id',
     },
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   },
   price: {
     allowNull: false,
@@ -41,6 +41,5 @@ const factory = DataTypes => ({
 module.exports = {
   up: async (queryInterface, DataTypes) =>
     queryInterface.createTable('Purchases', factory(DataTypes)),
-  down: async queryInterface => queryInterface.dropTable('Purchases'),
+  down: async (queryInterface) => queryInterface.dropTable('Purchases'),
 };
-

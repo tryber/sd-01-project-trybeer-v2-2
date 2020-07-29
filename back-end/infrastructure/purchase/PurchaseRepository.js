@@ -51,9 +51,6 @@ class PurchaseRepository {
         where: { purchase_id: orderId },
       }
     );
-
-    console.log('orders', orders)
-
     return orders;
   }
 }

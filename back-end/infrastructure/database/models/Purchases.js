@@ -15,13 +15,11 @@ const Purchases = (sequelize, DataTypes) => {
     }
   );
 
-  Purchases.associate = models => {
-    Purchases.hasOne(models.Carts, { foreignKey: 'cart_id' });    
+  Purchases.associate = (models) => {
+    Purchases.hasOne(models.Carts, { foreignKey: 'cart_id' });
   };
 
   return Purchases;
 };
-
-
 
 module.exports = Purchases;
