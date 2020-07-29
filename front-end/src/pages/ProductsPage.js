@@ -58,21 +58,27 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+function generateCards(data, totalValue, setTotalValue) {
+  return (
+    data.map((product) => (
+      <Cards
+        key={product.name}
+        price={product.price}
+        name={product.name}
+        quantity={product.quantity || 0}
+        image={`http://localhost:3001/${product.name}.jpg`}
+        func={submitProduct}
+        setTotal={{ totalValue, setTotalValue }}
+      />
+    ))
+  );
+}
+
 function generateView(classes, data, totalValue, setTotalValue, submitProduct) {
   return (
     <div>
       <div className={classes.container}>
-        {data.map((product) => (
-          <Cards
-            key={product.name}
-            price={product.price}
-            name={product.name}
-            quantity={product.quantity || 0}
-            image={`http://localhost:3001/${product.name}.jpg`}
-            func={submitProduct}
-            setTotal={{ totalValue, setTotalValue }}
-          />
-        ))}
+      {generateCards(data, totalValue, setTotalValue)}
       </div>
       <div className={classes.btnContainer}>
         <Link
@@ -91,34 +97,7 @@ function generateView(classes, data, totalValue, setTotalValue, submitProduct) {
   );
 }
 
-function ProductsPage() {
-  const [isLoged, setIsLoged] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [data, setData] = useState('');
-  const [totalValue, setTotalValue] = useState(0);
-  const user = JSON.parse(localStorage.getItem('user')) || '';
-  const classes = useStyles();
-
-  useEffect(() => {
-    async function login() {
-      const user = await validateLogin(setIsAdmin, setIsLoged);
-      if (user) {
-        const products = await getProducts();
-        setTotalValue(
-          products.reduce(
-            (acc, value) => acc + value.price * (value.quantity || 0),
-            0
-          )
-        );
-        setData(products);
-      }
-    }
-    login();
-  }, []);
-
-  if (!isLoged) return <Redirect to='/login' />;
-  if (isAdmin || user.role) return <Redirect to='/admin/orders' />;
-  if (!data) return <div>Loading...</div>;
+function generateSidebar(generateView, classes, data, totalValue, setTotalValue, submitProduct) {
   return (
     <SideBar
       title='Cliente - Produtos'
@@ -131,6 +110,30 @@ function ProductsPage() {
       )}
     />
   );
+}
+
+function ProductsPage() {
+  const [isLoged, setIsLoged] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [data, setData] = useState('');
+  const [totalValue, setTotalValue] = useState(0);
+  const user = JSON.parse(localStorage.getItem('user')) || '';
+  const classes = useStyles();
+  useEffect(() => {
+    async function login() {
+      const user = await validateLogin(setIsAdmin, setIsLoged);
+      if (user) {
+        const products = await getProducts();
+        setTotalValue(products.reduce((acc, value) => acc + value.price * (value.quantity || 0), 0));
+        setData(products);
+      }
+    }
+    login();
+  }, []);
+  if (!isLoged) return <Redirect to='/login' />;
+  if (isAdmin || user.role) return <Redirect to='/admin/orders' />;
+  if (!data) return <div>Loading...</div>;
+  return generateSidebar(generateView, classes, data, totalValue, setTotalValue, submitProduct);
 }
 
 export default ProductsPage;

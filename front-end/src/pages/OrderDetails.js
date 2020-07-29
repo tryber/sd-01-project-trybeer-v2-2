@@ -49,6 +49,38 @@ function renderProducts(products, classes) {
   });
 }
 
+function btnVerifyPending(verifyFunction, user, id, setStatusOrder, setShowButton) {
+  return (
+    verifyFunction && (
+      <Button
+        variant='contained'
+        color='primary'
+        data-testid='mark-as-prepare-order-btn'
+        onClick={() =>
+          updateStatus(user, id, 'Preparando', setStatusOrder, setShowButton)
+        }>
+        <strong>Preparar pedido</strong>
+      </Button>
+    )
+  );
+}
+
+function btnVerifyPreparing(verifyFunction, user, id, setStatusOrder, setShowButton) {
+  return (
+    verifyFunction && (
+      <Button
+        variant='contained'
+        color='primary'
+        data-testid='mark-as-delivered-btn'
+        onClick={() =>
+          updateStatus(user, id, 'Entregue', setStatusOrder, setShowButton)
+        }>
+        <strong>Marcar como Entregue</strong>
+      </Button>
+    )
+  );
+}
+
 function renderDetails(params) {
   const {
     data,
@@ -83,28 +115,8 @@ function renderDetails(params) {
         </h1>
       </div>
       <br/>
-      {verifyPending && (
-        <Button
-          variant='contained'
-          color='primary'
-          data-testid='mark-as-prepare-order-btn'
-          onClick={() =>
-            updateStatus(user, id, 'Preparando', setStatusOrder, setShowButton)
-          }>
-          <strong>Preparar pedido</strong>
-        </Button>
-      )}
-      {verifyPreparing && (
-        <Button
-          variant='contained'
-          color='primary'
-          data-testid='mark-as-delivered-btn'
-          onClick={() =>
-            updateStatus(user, id, 'Entregue', setStatusOrder, setShowButton)
-          }>
-          <strong>Marcar como Entregue</strong>
-        </Button>
-      )}
+      {btnVerifyPending(verifyPending, user, id, setStatusOrder, setShowButton)}
+      {btnVerifyPreparing(verifyPreparing, user, id, setStatusOrder, setShowButton)}
     </div>
   );
 }
@@ -137,35 +149,20 @@ function OrderDetails(props) {
   const user = JSON.parse(localStorage.getItem('user'));
   const id = props.match.params.id;
   const classes = useStyles();
-
   useEffect(() => {
     if (user) getOrders(user, setData, id);
     setShowButton(true);
   }, [showButton]);
-
   useEffect(() => {
     setStatusOrder(data.status);
   }, [data]);
-
   if (data.message || !user) return <Redirect to='/login' />;
   if (!data) return <div>Loading...</div>;
-
   const { purchase_date } = data;
   const date = new Date(purchase_date);
   const purchaseDate = `${date.getDate()}/${date.getMonth()}`;
   const testid = user.role ? 'order-status' : 'order-date';
-  const params = {
-    data,
-    purchaseDate,
-    statusOrder,
-    setStatusOrder,
-    testid,
-    user,
-    id,
-    classes,
-    setShowButton,
-  };
-
+  const params = { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton };
   return (
     <SideBar
       title={`Detalhes - Pedido ${id}`}
