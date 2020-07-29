@@ -1,31 +1,38 @@
 const express = require('express');
-const rescue = require('../rescue');
-const Products = require('../models/products');
+const rescue = require('../../rescue');
+
+const ProductRepository = require('../../infrastructure/product/ProductRepository');
 
 const router = express.Router();
 
 const allProducts = (req, res) => {
   const { email } = req.user;
-  return Products.getAllProducts(email).then(body => res.status(201).json(body));
+  return ProductRepository.getProducts(email).then(body =>
+    res.status(201).json(body),
+  );
 };
 
 const updateCart = async (req, res) => {
   const { email } = req.user;
   const { productName, quantity } = req.body;
-  const update = await Products.updateCart(email, productName, quantity);
+  const update = await ProductRepository.updateCart(
+    email,
+    productName,
+    quantity,
+  );
   return res.status(200).json(update);
 };
 
 const checkout = async (req, res) => {
   const { email } = req.user;
-  const productsCheckout = await Products.getCart(email);
-  return res.status(200).json(productsCheckout);
+  const { data } = await ProductRepository.getProductsInCart(email);
+  return res.status(200).json(data);
 };
 
 const deleteProductCart = async (req, res) => {
-  const { id } = req.params;
+  const { name } = req.params;
   const { email } = req.user;
-  const deleteProduct = await Products.deleteProduct(id, email);
+  const deleteProduct = await ProductRepository.deleteProduct(name, email);
   res.status(200).json(deleteProduct);
 };
 
@@ -35,6 +42,6 @@ router.get('/', rescue(allProducts));
 
 router.post('/', rescue(updateCart));
 
-router.delete('/:id', rescue(deleteProductCart));
+router.delete('/:name', rescue(deleteProductCart));
 
 module.exports = router;

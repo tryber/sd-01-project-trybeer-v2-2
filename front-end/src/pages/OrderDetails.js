@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import SideBar from '../components/SideBar';
+import { transformCurrency } from '../service';
+import Button from '@material-ui/core/Button';
 
 async function getOrders(user, setData, id) {
   const url = `http://localhost:3001/orders/${id}`;
@@ -13,9 +15,17 @@ async function getOrders(user, setData, id) {
 
 async function updateStatus(user, id, status, setStatusOrder, setShowButton) {
   const url = `http://localhost:3001/orders/${id}`;
-
-  await fetch(url, { method: 'PUT', headers: { authorization: user.token }, body: JSON.stringify({ status }) })
-    .then(response => response.json()).then(() => {
+  await fetch(url, {
+    method: 'PUT',
+    headers: {
+      authorization: user.token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  })
+    .then((response) => response.json())
+    .then(() => {
       setShowButton(false);
       setStatusOrder(status);
     });
@@ -31,26 +41,70 @@ function renderProducts(products, classes) {
           {' - '}
           <span data-testid={`${index}-product-name`}>{name}</span>
         </span>
-        <span data-testid={`${index}-product-total-value`}>R$ {price * quantity}</span>
+        <span data-testid={`${index}-product-total-value`}>
+          {transformCurrency(price * quantity)}
+        </span>
       </p>
     );
-  })
+  });
 }
 
 function renderDetails(params) {
-  const { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton } = params;
+  const {
+    data,
+    purchaseDate,
+    statusOrder,
+    setStatusOrder,
+    testid,
+    user,
+    id,
+    classes,
+    setShowButton,
+  } = params;
   const { status, price, products } = data;
-  const verifyPending = user.role === 1 && status === 'Pendente'
+  const verifyPending = user.role === 1 && status === 'Pendente';
   const verifyPreparing = user.role === 1 && status === 'Preparando';
   return (
     <div>
-      <h1>Pedido <span data-testid="order-number">{id}</span> - <span data-testid={testid}>{user.role ? statusOrder : purchaseDate}</span></h1>
+      <h1>
+        Pedido <span data-testid='order-number'>{id}</span> -{' '}
+        <span data-testid={testid}>
+          {user.role ? statusOrder : purchaseDate}
+        </span>
+      </h1>
       <div className={classes.container}>
         {renderProducts(products, classes)}
-        <h1 className={classes.totalPrice}>Total: <span data-testid="order-total-value">R$ {price}</span></h1>
+        <h1 className={classes.totalPrice}>
+          Total:{' '}
+          <span data-testid='order-total-value'>
+            {' '}
+            {transformCurrency(price)}
+          </span>
+        </h1>
       </div>
-      {(verifyPending) && <button data-testid="mark-as-prepare-order-btn" onClick={() => updateStatus(user, id, 'Preparando', setStatusOrder, setShowButton)}>Preparar pedido</button>}
-      {(verifyPreparing) && <button data-testid="mark-as-delivered-btn" onClick={() => updateStatus(user, id, 'Entregue', statusOrder, setStatusOrder, setShowButton)}>Marcar como Entregue</button>}
+      <br/>
+      {verifyPending && (
+        <Button
+          variant='contained'
+          color='primary'
+          data-testid='mark-as-prepare-order-btn'
+          onClick={() =>
+            updateStatus(user, id, 'Preparando', setStatusOrder, setShowButton)
+          }>
+          <strong>Preparar pedido</strong>
+        </Button>
+      )}
+      {verifyPreparing && (
+        <Button
+          variant='contained'
+          color='primary'
+          data-testid='mark-as-delivered-btn'
+          onClick={() =>
+            updateStatus(user, id, 'Entregue', setStatusOrder, setShowButton)
+          }>
+          <strong>Marcar como Entregue</strong>
+        </Button>
+      )}
     </div>
   );
 }
@@ -86,7 +140,7 @@ function OrderDetails(props) {
 
   useEffect(() => {
     if (user) getOrders(user, setData, id);
-    setShowButton(true)
+    setShowButton(true);
   }, [showButton]);
 
   useEffect(() => {
@@ -100,10 +154,23 @@ function OrderDetails(props) {
   const date = new Date(purchase_date);
   const purchaseDate = `${date.getDate()}/${date.getMonth()}`;
   const testid = user.role ? 'order-status' : 'order-date';
-  const params = { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton };
+  const params = {
+    data,
+    purchaseDate,
+    statusOrder,
+    setStatusOrder,
+    testid,
+    user,
+    id,
+    classes,
+    setShowButton,
+  };
 
   return (
-    <SideBar title={`Detalhes - Pedido ${id}`} children={renderDetails(params)} />
+    <SideBar
+      title={`Detalhes - Pedido ${id}`}
+      children={renderDetails(params)}
+    />
   );
 }
 

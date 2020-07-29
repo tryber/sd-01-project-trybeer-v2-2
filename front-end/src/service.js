@@ -11,7 +11,7 @@ export async function validateLogin(setIsAdmin, setIsLoged) {
   const result = await fetch('http://localhost:3001/user', {
     method: 'GET',
     headers: { authorization: user.token },
-  }).then(res => res.json());
+  }).then((res) => res.json());
   if (!result || result.message === 'jwt expired') {
     setIsLoged(false);
     return false;
@@ -29,7 +29,7 @@ export async function sendData(event, data, url, setIsAdmin, setIsLoged) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-  }).then(res => res.json());
+  }).then((res) => res.json());
   if (result.message) return alert('Dados Inválidos! Tente Novamente');
   localStorage.setItem('user', JSON.stringify(result));
   if (result.role) setIsAdmin(true);
@@ -63,7 +63,7 @@ export async function getOrders(user, setData) {
   let endPoint = '/products/checkout';
   const config = { headers: { authorization: user.token } };
   try {
-    api.get(endPoint, config).then(({ data }) => setData(data.data));
+    api.get(endPoint, config).then(({ data }) => setData(data));
   } catch (error) {
     toast.error(error.message);
   }
@@ -78,16 +78,21 @@ export async function sendAddress(data, user, func) {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   };
-  await fetch(url, config).then(res => res.json())
+  await fetch(url, config)
+    .then((res) => res.json())
     .then(() => alert('Pedido realizado com sucesso!'))
     .catch(() => alert('Pedido não concluído!'));
   func(true);
 }
 
 export function total(products) {
-  return products.reduce((acc, value) => acc + value.price * value.quantity, 0).toFixed(2) || 0;
+  return (
+    products
+      .reduce((acc, value) => acc + value.price * value.quantity, 0)
+      .toFixed(2) || 0
+  );
 }
 
 export const usingStyle = makeStyles((theme) => ({
@@ -112,9 +117,11 @@ export const usingStyle = makeStyles((theme) => ({
 
 export function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography variant='body2' color='textSecondary' align='center'>
       {'Copyright © '}
-      <Link color="inherit" href="https://github.com/tryber/sd-01-trybeer-project-2">
+      <Link
+        color='inherit'
+        href='https://github.com/tryber/sd-01-trybeer-project-2'>
         Trybeer
       </Link>{' '}
       {new Date().getFullYear()}
