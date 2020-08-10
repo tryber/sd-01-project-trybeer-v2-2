@@ -24,7 +24,7 @@ const ChatHeader = ({ role, room }) => {
   const classes = useStyles();
   return (
     <div className={classes.header}>
-      {role && <Link to="/admin/chat" className={classes.content}>
+      {role !== 0 && <Link to="/admin/chat" className={classes.content}>
         <ChevronLeftIcon /> Voltar
       </Link>}
       <h2>Conversa com {role ? room : 'a Loja'}:</h2>

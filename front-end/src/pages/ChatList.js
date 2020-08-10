@@ -34,8 +34,9 @@ function ChatList() {
   
   useEffect(() => {
     socket.emit('get all rooms');
-    socket.on('all rooms', allRooms => setRooms(allRooms));
   }, []);
+
+  socket.on('all rooms', allRooms => setRooms(allRooms));
 
   if (!user) return <Redirect to='/login'/>;
   if (!user.role) return <Redirect to='/chat'/>;
