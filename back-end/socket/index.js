@@ -5,7 +5,10 @@ const connection = require('./connection');
 
 async function getMessageHistory(email) {
   const db = await connection();
-  const result = await db.collection('messages').find({ client: email }).toArray();
+  const result = await db
+    .collection('messages')
+    .find({ client: email })
+    .toArray();
   return result;
 }
 
@@ -22,9 +25,10 @@ async function createRoom(email) {
 async function insertMessage(data) {
   const { text, client, admin } = data;
   const db = await connection();
-  await db.collection('messages').updateOne({
-    client,
-  },
+  await db.collection('messages').updateOne(
+    {
+      client,
+    },
     {
       $set: {
         lastUpdate: new Date(),
@@ -36,13 +40,17 @@ async function insertMessage(data) {
           date: new Date(),
         },
       },
-    });
+    },
+  );
 }
 
 async function getAllRooms() {
   const db = await connection();
   const data = await db.collection('messages').find().toArray();
-  return data.map(msg => ({ client: msg.client, lastUpdate: msg.lastUpdate }));
+  return data.map(msg => ({
+    client: msg.client,
+    lastUpdate: msg.lastUpdate,
+  }));
 }
 
 io.on('connection', (socket) => {

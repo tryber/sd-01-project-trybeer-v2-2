@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import SideBar from '../components/SideBar';
-
 import { makeStyles } from '@material-ui/core/styles';
+import SideBar from '../components/SideBar';
+import { transformCurrency } from '../service';
 import Button from '@material-ui/core/Button';
 
 async function getOrders(user, setData, id) {
@@ -13,12 +13,22 @@ async function getOrders(user, setData, id) {
     .then((result) => setData(result));
 }
 
-async function updateStatus(user, id, setShowButton) {
+async function updateStatus(user, id, status, setStatusOrder, setShowButton) {
   const url = `http://localhost:3001/orders/${id}`;
-
-  const res = await fetch(url, { method: 'PUT', headers: { authorization: user.token } })
-    .then(response => response.json());
-  if (res.message === 'Pedido entregue com sucesso!') setShowButton(false);
+  await fetch(url, {
+    method: 'PUT',
+    headers: {
+      authorization: user.token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  })
+    .then((response) => response.json())
+    .then(() => {
+      setShowButton(false);
+      setStatusOrder(status);
+    });
 }
 
 function renderProducts(products, classes) {
@@ -31,38 +41,83 @@ function renderProducts(products, classes) {
           {' - '}
           <span data-testid={`${index}-product-name`}>{name}</span>
         </span>
-        <span data-testid={`${index}-product-total-value`}>R$ {price * quantity}</span>
+        <span data-testid={`${index}-product-total-value`}>
+          {transformCurrency(price * quantity)}
+        </span>
       </p>
     );
-  })
+  });
 }
 
+function btnVerifyPending(verifyFunction, user, id, setStatusOrder, setShowButton) {
+  return (
+    verifyFunction && (
+      <Button
+        variant='contained'
+        color='primary'
+        data-testid='mark-as-prepare-order-btn'
+        onClick={() =>
+          updateStatus(user, id, 'Preparando', setStatusOrder, setShowButton)
+        }>
+        <strong>Preparar pedido</strong>
+      </Button>
+    )
+  );
+}
+
+function btnVerifyPreparing(verifyFunction, user, id, setStatusOrder, setShowButton) {
+  return (
+    verifyFunction && (
+      <Button
+        variant='contained'
+        color='primary'
+        data-testid='mark-as-delivered-btn'
+        onClick={() =>
+          updateStatus(user, id, 'Entregue', setStatusOrder, setShowButton)
+        }>
+        <strong>Marcar como Entregue</strong>
+      </Button>
+    )
+  );
+}
+
+function generateTitleDetails(classes, transformCurrency, price) {
+  return (
+    <h1 className={classes.totalPrice}>
+      Total:{' '}
+      <span data-testid='order-total-value'>
+        {' '}
+        {transformCurrency(price)}
+      </span>
+    </h1>
+  );
+}
 function renderDetails(params) {
-  const { data, purchaseDate, status, testid, user, id, classes, setShowButton } = params;
-  const { finished, price, products } = data;
+  const { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton,
+  } = params;
+  const { status, price, products } = data;
+  const verifyPending = user.role === 1 && status === 'Pendente';
+  const verifyPreparing = user.role === 1 && status === 'Preparando';
   return (
     <div>
-      <h1>Pedido <span data-testid="order-number">{id}</span> - <span data-testid={testid}>{user.role ? status : purchaseDate}</span></h1>
+      <h1>
+        Pedido <span data-testid='order-number'>{id}</span> -{' '}
+        <span data-testid={testid}>
+          {user.role ? statusOrder : purchaseDate}
+        </span>
+      </h1>
       <div className={classes.container}>
         {renderProducts(products, classes)}
-        <h1 className={classes.totalPrice}>Total: <span data-testid="order-total-value">R$ {price}</span></h1>
+        {generateTitleDetails(classes, transformCurrency, price)}
       </div>
-      {(user.role === 1 && !finished) &&
-      <Button
-        fullWidth
-        data-testid="mark-as-delivered-btn"
-        variant="contained"
-        color="primary"
-        className={classes.submit}
-        onClick={() => updateStatus(user, id, setShowButton)}
-      >
-        Marcar como Entregue
-      </Button>}
+      <br/>
+      {btnVerifyPending(verifyPending, user, id, setStatusOrder, setShowButton)}
+      {btnVerifyPreparing(verifyPreparing, user, id, setStatusOrder, setShowButton)}
     </div>
   );
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   container: {
     border: '1px solid black',
     paddingLeft: 10,
@@ -81,32 +136,29 @@ const useStyles = makeStyles((theme) => ({
   totalPrice: {
     textAlign: 'end',
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+});
 
 function OrderDetails(props) {
   const [data, setData] = useState('');
   const [showButton, setShowButton] = useState(true);
+  const [statusOrder, setStatusOrder] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
   const id = props.match.params.id;
   const classes = useStyles();
-
   useEffect(() => {
     if (user) getOrders(user, setData, id);
+    setShowButton(true);
   }, [showButton]);
-
-  if (data.message || !user) return <Redirect to='/login'/>;
+  useEffect(() => {
+    setStatusOrder(data.status);
+  }, [data]);
+  if (data.message || !user) return <Redirect to='/login' />;
   if (!data) return <div>Loading...</div>;
-
-  const { finished, purchase_date } = data;
-  const status = finished ? 'Entregue' : 'Pendente';
+  const { purchase_date } = data;
   const date = new Date(purchase_date);
   const purchaseDate = `${date.getDate()}/${date.getMonth()}`;
   const testid = user.role ? 'order-status' : 'order-date';
-  const params = { data, purchaseDate, status, testid, user, id, classes, setShowButton };
-
+  const params = { data, purchaseDate, statusOrder, setStatusOrder, testid, user, id, classes, setShowButton };
   return (
     <SideBar title={`Detalhes - Pedido ${id}`} children={renderDetails(params)} />
   );

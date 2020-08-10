@@ -51,10 +51,13 @@ function constructorTableCell(data, { cels, deleteIcon }, setShouldUpdate) {
         {transformCurrency(price * quantity)}
       </TableCell>
       <TableCell className={cels} align='left'>
-        <DeleteIcon className={deleteIcon} onClick={() => {
-          setShouldUpdate(true);
-          deleteProduct(name);
-        }} />
+        <DeleteIcon
+          className={deleteIcon}
+          onClick={() => {
+            setShouldUpdate(true);
+            deleteProduct(name);
+          }}
+        />
       </TableCell>
     </TableRow>
   ));
@@ -63,7 +66,6 @@ function constructorTableCell(data, { cels, deleteIcon }, setShouldUpdate) {
 function InvoiceTotal(props) {
   const classes = useStyles();
   const { data, setShouldUpdate } = props;
-
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label='spanning table'>
@@ -73,7 +75,7 @@ function InvoiceTotal(props) {
           <TableRow>
             <TableCell></TableCell>
             <TableCell colSpan={1}>Total</TableCell>
-            <TableCell align='left'>{transformCurrency(total(data))}</TableCell>
+            <TableCell align='left'>R$ {total(data)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
